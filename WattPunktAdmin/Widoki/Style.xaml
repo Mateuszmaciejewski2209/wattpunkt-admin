@@ -1,0 +1,254 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:w="clr-namespace:WattPunktAdmin.Widoki"
+                    xmlns:p="clr-namespace:System.Windows.Controls.Primitives;assembly=PresentationFramework">
+
+    <!-- Kolory -->
+    <SolidColorBrush x:Key="Glowny" Color="#1F6F54" />
+    <SolidColorBrush x:Key="GlownyCiemny" Color="#15523E" />
+    <SolidColorBrush x:Key="GlownyJasny" Color="#E3F1EB" />
+    <SolidColorBrush x:Key="Akcent" Color="#F2B705" />
+    <SolidColorBrush x:Key="Tlo" Color="#F4F7F6" />
+    <SolidColorBrush x:Key="Ramka" Color="#C9D6D1" />
+    <SolidColorBrush x:Key="Blad" Color="#C62828" />
+    <SolidColorBrush x:Key="BladJasny" Color="#FDECEC" />
+    <SolidColorBrush x:Key="TekstSzary" Color="#5F6B66" />
+
+    <!-- Konwertery -->
+    <w:BoolNaWidocznoscKonwerter x:Key="BoolNaWidocznosc" />
+    <w:BoolNaWidocznoscKonwerter x:Key="BoolNaWidocznoscOdwrotny" Odwroc="True" />
+    <w:NieNullKonwerter x:Key="NieNull" />
+    <w:RownaSieKonwerter x:Key="RownaSie" />
+
+    <!-- Szablon bledu walidacji: czerwona ramka i znak ostrzezenia przy polu -->
+    <ControlTemplate x:Key="SzablonBledu">
+        <DockPanel LastChildFill="True">
+            <Border DockPanel.Dock="Right" Background="{StaticResource Blad}" CornerRadius="8" Width="16" Height="16" Margin="3,0,0,0"
+                    ToolTip="{Binding ElementName=pole, Path=AdornedElement.(Validation.Errors)/ErrorContent}">
+                <TextBlock Text="!" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <Border BorderBrush="{StaticResource Blad}" BorderThickness="1.5" CornerRadius="2">
+                <AdornedElementPlaceholder x:Name="pole" />
+            </Border>
+        </DockPanel>
+    </ControlTemplate>
+
+    <Style x:Key="PoleBazowe" TargetType="Control">
+        <Setter Property="Margin" Value="0,2,22,8" />
+        <Setter Property="MinHeight" Value="26" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Validation.ErrorTemplate" Value="{StaticResource SzablonBledu}" />
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="True">
+                <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)/ErrorContent}" />
+                <Setter Property="Background" Value="{StaticResource BladJasny}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="TextBox" BasedOn="{StaticResource PoleBazowe}">
+        <Setter Property="Padding" Value="4,2" />
+    </Style>
+    <Style TargetType="PasswordBox" BasedOn="{StaticResource PoleBazowe}">
+        <Setter Property="Padding" Value="4,2" />
+    </Style>
+    <Style TargetType="ComboBox" BasedOn="{StaticResource PoleBazowe}" />
+    <Style TargetType="DatePicker" BasedOn="{StaticResource PoleBazowe}">
+        <Style.Resources>
+            <!-- przycisk kalendarza i przyciski w kalendarzu bez stylu przyciskow aplikacji (MinWidth 80 zabieral miejsce na date) -->
+            <Style TargetType="Button" />
+        </Style.Resources>
+    </Style>
+    <!-- pole tekstowe kalendarza: krotka podpowiedz z formatem zamiast domyslnego "Wybierz datę", ktore nie miesci sie w waskich polach -->
+    <Style TargetType="p:DatePickerTextBox">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="p:DatePickerTextBox">
+                    <Grid>
+                        <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" Margin="0" />
+                        <TextBlock x:Name="Podpowiedz" Text="dd.mm.rrrr" Foreground="#8A9590" Margin="3,0,0,0"
+                                   VerticalAlignment="Center" IsHitTestVisible="False" Visibility="Collapsed" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Text" Value="">
+                            <Setter TargetName="Podpowiedz" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="Text" Value="{x:Null}">
+                            <Setter TargetName="Podpowiedz" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Filtry: kazde pole z podpisem nad nim; przy zawijaniu WrapPanel podpis zostaje razem z polem -->
+    <Style x:Key="PoleFiltra" TargetType="FrameworkElement">
+        <Style.Resources>
+            <!-- przycisk kalendarza i przyciski w kalendarzu bez stylu przyciskow aplikacji (MinWidth 80 zabieral miejsce na date) -->
+            <Style TargetType="Button" />
+        </Style.Resources>
+        <Setter Property="MinWidth" Value="140" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="Filtr" TargetType="HeaderedContentControl">
+        <Setter Property="Margin" Value="0,0,10,6" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="HeaderedContentControl">
+                    <StackPanel>
+                        <ContentPresenter ContentSource="Header" Margin="1,0,0,2"
+                                          TextElement.FontSize="11" TextElement.Foreground="{StaticResource TekstSzary}" />
+                        <ContentPresenter />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="PrzyciskiFiltra" TargetType="StackPanel">
+        <Setter Property="Orientation" Value="Horizontal" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+    </Style>
+
+    <Style x:Key="Etykieta" TargetType="TextBlock">
+        <Setter Property="Margin" Value="0,4,10,8" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Foreground" Value="{StaticResource TekstSzary}" />
+    </Style>
+    <Style x:Key="Naglowek" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource GlownyCiemny}" />
+        <Setter Property="Margin" Value="0,0,0,12" />
+    </Style>
+    <Style x:Key="Podnaglowek" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Margin" Value="0,14,0,6" />
+    </Style>
+
+    <!-- Przyciski z wlasnym szablonem (ControlTemplate) -->
+    <Style TargetType="Button">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="Foreground" Value="{StaticResource GlownyCiemny}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Glowny}" />
+        <Setter Property="Padding" Value="14,5" />
+        <Setter Property="Margin" Value="0,0,8,6" />
+        <Setter Property="MinWidth" Value="80" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="tlo" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1" CornerRadius="4" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="tlo" Property="Opacity" Value="0.85" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="tlo" Property="Opacity" Value="0.7" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="tlo" Property="Opacity" Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="PrzyciskGlowny" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Background" Value="{StaticResource Glowny}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style x:Key="PrzyciskUsun" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Foreground" Value="{StaticResource Blad}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Blad}" />
+    </Style>
+
+    <!-- Siatki danych -->
+    <Style TargetType="DataGrid">
+        <Setter Property="AutoGenerateColumns" Value="False" />
+        <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="CanUserAddRows" Value="False" />
+        <Setter Property="SelectionMode" Value="Single" />
+        <Setter Property="HeadersVisibility" Value="Column" />
+        <Setter Property="GridLinesVisibility" Value="Horizontal" />
+        <Setter Property="HorizontalGridLinesBrush" Value="#E4EAE8" />
+        <Setter Property="AlternatingRowBackground" Value="#F7FAF9" />
+        <Setter Property="BorderBrush" Value="{StaticResource Ramka}" />
+        <Setter Property="RowHeight" Value="24" />
+        <Setter Property="EnableRowVirtualization" Value="True" />
+    </Style>
+    <Style TargetType="DataGridColumnHeader">
+        <Setter Property="Background" Value="{StaticResource GlownyJasny}" />
+        <Setter Property="Padding" Value="6,5" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="BorderBrush" Value="{StaticResource Ramka}" />
+        <Setter Property="BorderThickness" Value="0,0,1,1" />
+    </Style>
+    <!-- zaznaczony wiersz jest wyrazny takze wtedy, gdy siatka nie ma fokusu (np. po kliknieciu w formularz) -->
+    <Style TargetType="DataGridCell">
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="#CFE7DC" />
+                <Setter Property="Foreground" Value="Black" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="KomorkaLiczby" TargetType="TextBlock">
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="Margin" Value="0,0,6,0" />
+    </Style>
+
+    <Style TargetType="GroupBox">
+        <Setter Property="Padding" Value="10,8" />
+        <Setter Property="BorderBrush" Value="{StaticResource Ramka}" />
+        <Setter Property="HeaderTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" FontWeight="SemiBold" FontSize="14" Foreground="{StaticResource GlownyCiemny}" />
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Expander">
+        <Setter Property="Margin" Value="0,0,0,8" />
+        <Setter Property="Padding" Value="6" />
+        <Setter Property="BorderBrush" Value="{StaticResource Ramka}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Background" Value="White" />
+    </Style>
+
+    <!-- Kafel z liczba na panelu startowym -->
+    <Style x:Key="Kafel" TargetType="Border">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="BorderBrush" Value="{StaticResource Ramka}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="16,12" />
+        <Setter Property="Margin" Value="0,0,12,12" />
+    </Style>
+    <Style x:Key="KafelOpis" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource TekstSzary}" />
+    </Style>
+    <Style x:Key="KafelLiczba" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource GlownyCiemny}" />
+    </Style>
+
+    <!-- Podsumowanie bledow formularza -->
+    <DataTemplate x:Key="ListaBledow">
+        <TextBlock Foreground="{StaticResource Blad}" TextWrapping="Wrap" Margin="0,1">
+            <Run Text="• " /><Run Text="{Binding Mode=OneWay}" />
+        </TextBlock>
+    </DataTemplate>
+</ResourceDictionary>

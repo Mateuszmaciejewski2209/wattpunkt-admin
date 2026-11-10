@@ -1,0 +1,35 @@
+<UserControl x:Class="WattPunktAdmin.Widoki.DziennikView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel Margin="10">
+        <Expander DockPanel.Dock="Top" Header="Filtry" IsExpanded="True">
+            <WrapPanel>
+                <HeaderedContentControl Header="Pracownik" Style="{StaticResource Filtr}">
+                    <ComboBox ItemsSource="{Binding PracownicyFiltra}" SelectedItem="{Binding PracownikFiltra}" Style="{StaticResource PoleFiltra}" Width="240" />
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="Operacja" Style="{StaticResource Filtr}">
+                    <ComboBox ItemsSource="{Binding Operacje}" SelectedItem="{Binding Operacja}" Style="{StaticResource PoleFiltra}" />
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="Od dnia" Style="{StaticResource Filtr}">
+                    <DatePicker SelectedDate="{Binding Od}" Style="{StaticResource PoleFiltra}" Width="140" MinWidth="0" />
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="Do dnia" Style="{StaticResource Filtr}">
+                    <DatePicker SelectedDate="{Binding Do}" Style="{StaticResource PoleFiltra}" Width="140" MinWidth="0" />
+                </HeaderedContentControl>
+                <StackPanel Style="{StaticResource PrzyciskiFiltra}">
+                    <Button Content="Szukaj" Style="{StaticResource PrzyciskGlowny}" Command="{Binding SzukajCommand}" />
+                </StackPanel>
+            </WrapPanel>
+        </Expander>
+        <DataGrid ItemsSource="{Binding Wpisy}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Data" Binding="{Binding Data, StringFormat=dd.MM.yyyy HH:mm:ss}" Width="140" />
+                <DataGridTextColumn Header="Pracownik" Binding="{Binding Pracownik}" Width="110" />
+                <DataGridTextColumn Header="Operacja" Binding="{Binding Operacja}" Width="90" />
+                <DataGridTextColumn Header="Obiekt" Binding="{Binding Obiekt}" Width="90" />
+                <DataGridTextColumn Header="Nr" Binding="{Binding ObiektID}" Width="60" ElementStyle="{StaticResource KomorkaLiczby}" />
+                <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="*" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>

@@ -1,0 +1,71 @@
+﻿<Window x:Class="WattPunktAdmin.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:WattPunktAdmin.ViewModels"
+        xmlns:w="clr-namespace:WattPunktAdmin.Widoki"
+        Title="{Binding Tytul}" Width="1280" Height="800" MinWidth="1000" MinHeight="600"
+        WindowStartupLocation="CenterScreen" Background="{StaticResource Tlo}">
+
+    <!-- ViewModel zakladki wybiera swoj widok przez szablon danych (nawigacja MVVM bez kodu w code-behind) -->
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:PanelViewModel}"><w:PanelView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:StacjeViewModel}"><w:StacjeView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:LadowarkiViewModel}"><w:LadowarkiView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:KlienciViewModel}"><w:KlienciView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AwarieViewModel}"><w:AwarieView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SesjeViewModel}"><w:SesjeView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:PracownicyViewModel}"><w:PracownicyView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:DziennikViewModel}"><w:DziennikView /></DataTemplate>
+    </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Key="F5" Command="{Binding OdswiezCommand}" />
+    </Window.InputBindings>
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" Background="White" Padding="2">
+            <MenuItem Header="_Plik">
+                <MenuItem Header="_Odśwież zakładkę" InputGestureText="F5" Command="{Binding OdswiezCommand}" />
+                <Separator />
+                <MenuItem Header="_Wyloguj" Command="{Binding WylogujCommand}" />
+                <MenuItem Header="_Zakończ" Command="{Binding ZakonczCommand}" />
+            </MenuItem>
+            <MenuItem Header="_Konto">
+                <MenuItem Header="_Zmień hasło..." Command="{Binding ZmienHasloCommand}" />
+            </MenuItem>
+            <MenuItem Header="Pomo_c">
+                <MenuItem Header="_O programie" Command="{Binding OProgramieCommand}" />
+            </MenuItem>
+        </Menu>
+
+        <StatusBar DockPanel.Dock="Bottom" Background="{StaticResource GlownyCiemny}" Foreground="White" Padding="6,2">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <DockPanel LastChildFill="True" />
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem DockPanel.Dock="Right">
+                <TextBlock>
+                    <Run Text="Zalogowany: " /><Run Text="{Binding Uzytkownik, Mode=OneWay}" FontWeight="SemiBold" />
+                    <Run Text="  Rola: " /><Run Text="{Binding RolaOpis, Mode=OneWay}" FontWeight="SemiBold" />
+                </TextBlock>
+            </StatusBarItem>
+            <StatusBarItem DockPanel.Dock="Right">
+                <ProgressBar IsIndeterminate="True" Width="120" Height="10"
+                             Visibility="{Binding Stan.Zajety, Converter={StaticResource BoolNaWidocznosc}}" />
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock Text="{Binding Stan.Komunikat}" TextTrimming="CharacterEllipsis" AutomationProperties.AutomationId="PasekStanu" />
+            </StatusBarItem>
+        </StatusBar>
+
+        <TabControl ItemsSource="{Binding Zakladki}" SelectedItem="{Binding WybranaZakladka}" Margin="6" Padding="0"
+                    AutomationProperties.AutomationId="Zakladki">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Naglowek}" Padding="10,3" FontSize="13" />
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+        </TabControl>
+    </DockPanel>
+</Window>

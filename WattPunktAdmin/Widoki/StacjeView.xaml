@@ -1,0 +1,119 @@
+<UserControl x:Class="WattPunktAdmin.Widoki.StacjeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="400" />
+        </Grid.ColumnDefinitions>
+
+        <DockPanel Margin="0,0,10,0">
+            <Expander DockPanel.Dock="Top" Header="Wyszukiwanie i filtry" IsExpanded="True">
+                <WrapPanel>
+                    <HeaderedContentControl Header="Kod, nazwa lub miejscowość" Style="{StaticResource Filtr}">
+                        <TextBox Text="{Binding Szukaj, UpdateSourceTrigger=PropertyChanged}" Width="200" Style="{StaticResource PoleFiltra}"
+                                 ToolTip="Wpisz fragment kodu, nazwy stacji albo miejscowości i naciśnij Enter" AutomationProperties.AutomationId="SzukajStacji">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding SzukajCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="Województwo" Style="{StaticResource Filtr}">
+                        <ComboBox ItemsSource="{Binding Wojewodztwa}" SelectedItem="{Binding Wojewodztwo}" Style="{StaticResource PoleFiltra}" />
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="Typ lokalizacji" Style="{StaticResource Filtr}">
+                        <ComboBox ItemsSource="{Binding TypyFiltra}" SelectedItem="{Binding Typ}" Style="{StaticResource PoleFiltra}" />
+                    </HeaderedContentControl>
+                    <StackPanel Style="{StaticResource PrzyciskiFiltra}">
+                        <Button Content="Szukaj" Style="{StaticResource PrzyciskGlowny}" Command="{Binding SzukajCommand}" />
+                        <Button Content="Wyczyść filtry" Command="{Binding WyczyscFiltrCommand}" />
+                    </StackPanel>
+                </WrapPanel>
+            </Expander>
+            <DataGrid ItemsSource="{Binding Stacje}" SelectedItem="{Binding Wybrana}" AutomationProperties.AutomationId="ListaStacji">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Kod" Binding="{Binding Kod}" Width="70" />
+                    <DataGridTextColumn Header="Nazwa" Binding="{Binding Nazwa}" Width="2*" />
+                    <DataGridTextColumn Header="Miejscowość" Binding="{Binding Miejscowosc}" Width="*" />
+                    <DataGridTextColumn Header="Województwo" Binding="{Binding Wojewodztwo}" Width="*" />
+                    <DataGridTextColumn Header="Typ lokalizacji" Binding="{Binding TypLokalizacji}" Width="*" />
+                    <DataGridTextColumn Header="Uruchomiona" Binding="{Binding DataUruchomienia, StringFormat=dd.MM.yyyy}" Width="95" />
+                    <DataGridTextColumn Header="Ładowarki" Binding="{Binding LiczbaLadowarek}" Width="75" ElementStyle="{StaticResource KomorkaLiczby}" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+
+        <GroupBox Grid.Column="1" Header="{Binding Formularz.Tytul}">
+            <ScrollViewer Focusable="False" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Edycja stacji i ładowarek jest dostępna tylko dla administratora."
+                               Foreground="{StaticResource TekstSzary}" TextWrapping="Wrap" Margin="0,0,0,8"
+                               Visibility="{Binding MozeEdytowac, Converter={StaticResource BoolNaWidocznoscOdwrotny}}" />
+                    <Grid IsEnabled="{Binding DataContext.MozeEdytowac, RelativeSource={RelativeSource AncestorType=UserControl}}" DataContext="{Binding Formularz}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Kod" Style="{StaticResource Etykieta}" />
+                        <TextBox Grid.Column="1" Text="{Binding Kod, UpdateSourceTrigger=PropertyChanged}" CharacterCasing="Upper" MaxLength="5"
+                                 AutomationProperties.AutomationId="KodStacji" />
+                        <TextBlock Grid.Row="1" Text="Nazwa" Style="{StaticResource Etykieta}" />
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Nazwa, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.AutomationId="NazwaStacji" />
+                        <TextBlock Grid.Row="2" Text="Miejscowość" Style="{StaticResource Etykieta}" />
+                        <ComboBox Grid.Row="2" Grid.Column="1" SelectedItem="{Binding Miejscowosc}" AutomationProperties.AutomationId="MiejscowoscStacji"
+                                  ItemsSource="{Binding DataContext.Miejscowosci, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                        <TextBlock Grid.Row="3" Text="Typ lokalizacji" Style="{StaticResource Etykieta}" />
+                        <ComboBox Grid.Row="3" Grid.Column="1" SelectedItem="{Binding TypLokalizacji}" AutomationProperties.AutomationId="TypStacji"
+                                  ItemsSource="{Binding DataContext.TypyLokalizacji, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                        <TextBlock Grid.Row="4" Text="Data uruchomienia" Style="{StaticResource Etykieta}" />
+                        <DatePicker Grid.Row="4" Grid.Column="1" SelectedDate="{Binding DataUruchomienia}" AutomationProperties.AutomationId="DataStacji" />
+                    </Grid>
+                    <ItemsControl ItemsSource="{Binding Formularz.WszystkieBledy}" ItemTemplate="{StaticResource ListaBledow}" Margin="0,0,0,6" />
+                    <WrapPanel Visibility="{Binding MozeEdytowac, Converter={StaticResource BoolNaWidocznosc}}">
+                        <Button Content="Nowa stacja" Command="{Binding NowaCommand}" AutomationProperties.AutomationId="NowaStacja" />
+                        <Button Content="Zapisz" Style="{StaticResource PrzyciskGlowny}" Command="{Binding ZapiszCommand}" AutomationProperties.AutomationId="ZapiszStacje" />
+                        <Button Content="Anuluj" Command="{Binding AnulujCommand}" />
+                        <Button Content="Usuń" Style="{StaticResource PrzyciskUsun}" Command="{Binding UsunCommand}" AutomationProperties.AutomationId="UsunStacje"
+                                Visibility="{Binding MozeUsuwac, Converter={StaticResource BoolNaWidocznosc}}" />
+                    </WrapPanel>
+
+                    <TextBlock Text="Ładowarki na stacji" Style="{StaticResource Podnaglowek}" />
+                    <DataGrid ItemsSource="{Binding LadowarkiStacji}" SelectedItem="{Binding WybranaLadowarkaStacji}" MaxHeight="260"
+                              AutomationProperties.AutomationId="LadowarkiStacji">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AwariaOtwarta}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BladJasny}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Numer seryjny" Binding="{Binding NumerSeryjny}" Width="110" />
+                            <DataGridTextColumn Header="Model" Binding="{Binding Model}" Width="*" MinWidth="150" />
+                            <DataGridTextColumn Header="Klasa" Binding="{Binding KlasaMocy}" Width="45" />
+                            <!-- stan tylko do odczytu: napis zamiast pola wyboru, ktore wygladaloby na klikalne -->
+                            <DataGridTemplateColumn Header="Awaria" Width="62">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="otwarta" Foreground="{StaticResource Blad}" FontWeight="SemiBold" Margin="4,0,0,0"
+                                                   VerticalAlignment="Center"
+                                                   Visibility="{Binding AwariaOtwarta, Converter={StaticResource BoolNaWidocznosc}}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button Content="Zgłoś awarię wybranej ładowarki" Command="{Binding ZglosAwarieCommand}" HorizontalAlignment="Left"
+                            Margin="0,8,0,0" AutomationProperties.AutomationId="ZglosAwarieStacji" ToolTipService.ShowOnDisabled="True"
+                            ToolTip="Zaznacz ładowarkę bez otwartej awarii. Otworzy się zakładka Awarie z wybraną ładowarką." />
+                </StackPanel>
+            </ScrollViewer>
+        </GroupBox>
+    </Grid>
+</UserControl>

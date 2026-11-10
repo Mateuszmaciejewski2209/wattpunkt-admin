@@ -1,0 +1,14 @@
+## Visual Studio / .NET
+.vs/
+bin/
+obj/
+*.user
+*.suo
+TestResults/
+
+## Logi aplikacji
+logi/
+
+## Sprawozdanie (dane osobowe, poza repozytorium)
+Sprawozdanie*.docx
+Sprawozdanie*.pdf

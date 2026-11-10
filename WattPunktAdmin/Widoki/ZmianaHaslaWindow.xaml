@@ -1,0 +1,25 @@
+<Window x:Class="WattPunktAdmin.Widoki.ZmianaHaslaWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:w="clr-namespace:WattPunktAdmin.Widoki"
+        Title="Zmiana hasła" Width="440" SizeToContent="Height" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" Background="{StaticResource Tlo}">
+    <StackPanel Margin="20">
+        <TextBlock Text="{Binding Naglowek}" TextWrapping="Wrap" Margin="0,0,0,14" />
+        <TextBlock Text="Obecne hasło" Style="{StaticResource Etykieta}" Margin="0,0,0,2" />
+        <PasswordBox AutomationProperties.AutomationId="StareHaslo" w:PasswordBoxPomocnik.Wlacz="True"
+                     w:PasswordBoxPomocnik.Haslo="{Binding StareHaslo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Text="Nowe hasło (co najmniej 8 znaków, litera i cyfra)" Style="{StaticResource Etykieta}" Margin="0,0,0,2" />
+        <PasswordBox AutomationProperties.AutomationId="NoweHaslo" w:PasswordBoxPomocnik.Wlacz="True"
+                     w:PasswordBoxPomocnik.Haslo="{Binding NoweHaslo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Text="Powtórz nowe hasło" Style="{StaticResource Etykieta}" Margin="0,0,0,2" />
+        <PasswordBox AutomationProperties.AutomationId="PowtorzHaslo" w:PasswordBoxPomocnik.Wlacz="True"
+                     w:PasswordBoxPomocnik.Haslo="{Binding PowtorzHaslo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <ItemsControl ItemsSource="{Binding WszystkieBledy}" ItemTemplate="{StaticResource ListaBledow}" Margin="0,4,0,0" />
+        <TextBlock Text="{Binding Komunikat}" Foreground="{StaticResource Blad}" TextWrapping="Wrap" Margin="0,6,0,0" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+            <Button Content="Zmień hasło" Style="{StaticResource PrzyciskGlowny}" IsDefault="True" Command="{Binding ZmienCommand}" />
+            <Button Content="{Binding Wymuszona, Converter={x:Static w:ZmianaHaslaWindow.TekstAnuluj}}" IsCancel="True" Margin="0" />
+        </StackPanel>
+    </StackPanel>
+</Window>

@@ -1,0 +1,3 @@
+{
+  "PolaczenieZBaza": "Server=.\\SQLEXPRESS;Database=WattPunktAdmin;Trusted_Connection=True;TrustServerCertificate=True;Connect Timeout=5"
+}

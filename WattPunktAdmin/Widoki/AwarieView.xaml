@@ -1,0 +1,103 @@
+<UserControl x:Class="WattPunktAdmin.Widoki.AwarieView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="400" />
+        </Grid.ColumnDefinitions>
+
+        <DockPanel Margin="0,0,10,0">
+            <Expander DockPanel.Dock="Top" Header="Wyszukiwanie i filtry" IsExpanded="True">
+                <WrapPanel>
+                    <HeaderedContentControl Header="Stan" Style="{StaticResource Filtr}">
+                        <CheckBox Content="tylko otwarte" IsChecked="{Binding TylkoOtwarte}" Margin="0,4,6,4" AutomationProperties.AutomationId="TylkoOtwarte" />
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="Stacja" Style="{StaticResource Filtr}">
+                        <ComboBox ItemsSource="{Binding StacjeFiltra}" SelectedItem="{Binding StacjaFiltra}" Style="{StaticResource PoleFiltra}" Width="170" AutomationProperties.AutomationId="AwarieStacjaFiltr" />
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="Kategoria" Style="{StaticResource Filtr}">
+                        <ComboBox ItemsSource="{Binding KategorieFiltra}" SelectedItem="{Binding KategoriaFiltra}" Style="{StaticResource PoleFiltra}" Width="170" />
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="Od dnia" Style="{StaticResource Filtr}">
+                        <DatePicker SelectedDate="{Binding Od}" Style="{StaticResource PoleFiltra}" Width="140" MinWidth="0" />
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="Do dnia" Style="{StaticResource Filtr}">
+                        <DatePicker SelectedDate="{Binding Do}" Style="{StaticResource PoleFiltra}" Width="140" MinWidth="0" />
+                    </HeaderedContentControl>
+                    <StackPanel Style="{StaticResource PrzyciskiFiltra}">
+                        <Button Content="Szukaj" Style="{StaticResource PrzyciskGlowny}" Command="{Binding SzukajCommand}" />
+                    </StackPanel>
+                </WrapPanel>
+            </Expander>
+            <WrapPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                <Button Content="Zamknij wybraną awarię (naprawiono)" Command="{Binding ZamknijCommand}" />
+                <Button Content="Usuń wpis" Style="{StaticResource PrzyciskUsun}" Command="{Binding UsunCommand}"
+                        Visibility="{Binding MozeUsuwac, Converter={StaticResource BoolNaWidocznosc}}" />
+            </WrapPanel>
+            <DataGrid ItemsSource="{Binding Awarie}" SelectedItem="{Binding Wybrana}" AutomationProperties.AutomationId="ListaAwarii">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Otwarta}" Value="True">
+                                <Setter Property="Background" Value="{StaticResource BladJasny}" />
+                                <Setter Property="FontWeight" Value="SemiBold" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Początek" Binding="{Binding Poczatek, StringFormat=dd.MM.yyyy HH:mm}" Width="115" />
+                    <DataGridTextColumn Header="Koniec" Binding="{Binding Koniec, StringFormat=dd.MM.yyyy HH:mm, TargetNullValue=otwarta}" Width="115" />
+                    <DataGridTextColumn Header="Naprawa" Binding="{Binding CzasNaprawy}" Width="70" />
+                    <DataGridTextColumn Header="Stacja" Binding="{Binding Stacja}" Width="*" />
+                    <DataGridTextColumn Header="Ładowarka" Binding="{Binding NumerSeryjny}" Width="110" />
+                    <DataGridTextColumn Header="Kategoria" Binding="{Binding Kategoria}" Width="*" />
+                    <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+
+        <GroupBox Grid.Column="1" Header="Zgłoszenie nowej awarii">
+            <StackPanel>
+                <Grid DataContext="{Binding Formularz}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Stacja" Style="{StaticResource Etykieta}" />
+                    <ComboBox Grid.Column="1" SelectedItem="{Binding Stacja}" AutomationProperties.AutomationId="StacjaAwarii"
+                              ItemsSource="{Binding DataContext.Stacje, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                    <TextBlock Grid.Row="1" Text="Ładowarka" Style="{StaticResource Etykieta}" />
+                    <ComboBox Grid.Row="1" Grid.Column="1" SelectedItem="{Binding Ladowarka}" AutomationProperties.AutomationId="LadowarkaAwarii"
+                              ItemsSource="{Binding DataContext.LadowarkiStacji, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                    <TextBlock Grid.Row="2" Text="Kategoria" Style="{StaticResource Etykieta}" />
+                    <ComboBox Grid.Row="2" Grid.Column="1" SelectedItem="{Binding Kategoria}" AutomationProperties.AutomationId="KategoriaAwarii"
+                              ItemsSource="{Binding DataContext.Kategorie, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                    <TextBlock Grid.Row="3" Text="Początek" Style="{StaticResource Etykieta}" />
+                    <Grid Grid.Row="3" Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="90" />
+                        </Grid.ColumnDefinitions>
+                        <DatePicker SelectedDate="{Binding Data}" />
+                        <TextBox Grid.Column="1" Text="{Binding Godzina, UpdateSourceTrigger=PropertyChanged}" ToolTip="Godzina GG:MM"
+                                 AutomationProperties.AutomationId="GodzinaAwarii" />
+                    </Grid>
+                    <TextBlock Grid.Row="4" Text="Opis" Style="{StaticResource Etykieta}" VerticalAlignment="Top" />
+                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Opis, UpdateSourceTrigger=PropertyChanged}" Height="70"
+                             TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top" AutomationProperties.AutomationId="OpisAwarii" />
+                </Grid>
+                <ItemsControl ItemsSource="{Binding Formularz.WszystkieBledy}" ItemTemplate="{StaticResource ListaBledow}" Margin="0,0,0,6" />
+                <Button Content="Zgłoś awarię" Style="{StaticResource PrzyciskGlowny}" Command="{Binding ZglosCommand}" HorizontalAlignment="Left"
+                        AutomationProperties.AutomationId="ZglosAwarie" />
+                <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TekstSzary}" Margin="0,12,0,0"
+                           Text="Po wybraniu stacji lista ładowarek pokazuje tylko ładowarki tej stacji. Ładowarka może mieć jedną otwartą awarię naraz." />
+            </StackPanel>
+        </GroupBox>
+    </Grid>
+</UserControl>

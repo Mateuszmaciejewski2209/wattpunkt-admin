@@ -1,0 +1,77 @@
+<UserControl x:Class="WattPunktAdmin.Widoki.PracownicyView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="400" />
+        </Grid.ColumnDefinitions>
+
+        <DockPanel Margin="0,0,10,0">
+            <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <Button Content="Odśwież" Command="{Binding OdswiezCommand}" />
+                <Button Content="Nowe konto" Style="{StaticResource PrzyciskGlowny}" Command="{Binding NowyCommand}" AutomationProperties.AutomationId="NoweKonto" />
+            </WrapPanel>
+            <DataGrid ItemsSource="{Binding Pracownicy}" SelectedItem="{Binding Wybrany}" AutomationProperties.AutomationId="ListaPracownikow">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Aktywny}" Value="False">
+                                <Setter Property="Foreground" Value="Gray" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Zablokowany}" Value="True">
+                                <Setter Property="Background" Value="{StaticResource BladJasny}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Login" Binding="{Binding Login}" Width="110" />
+                    <DataGridTextColumn Header="Imię i nazwisko" Binding="{Binding ImieNazwisko}" Width="*" />
+                    <DataGridTextColumn Header="Rola" Binding="{Binding Rola}" Width="110" />
+                    <DataGridTextColumn Header="Stan konta" Binding="{Binding Stan}" Width="95" />
+                    <DataGridTextColumn Header="Nieudane próby" Binding="{Binding NieudaneProby}" Width="105" ElementStyle="{StaticResource KomorkaLiczby}" />
+                    <DataGridCheckBoxColumn Header="Zmiana hasła" Binding="{Binding WymagaZmianyHasla}" Width="95" />
+                    <DataGridTextColumn Header="Ostatnie logowanie" Binding="{Binding OstatnieLogowanie, StringFormat=dd.MM.yyyy HH:mm}" Width="130" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+
+        <GroupBox Grid.Column="1" Header="{Binding Formularz.Tytul}">
+            <StackPanel>
+                <Grid DataContext="{Binding Formularz}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Login" Style="{StaticResource Etykieta}" />
+                    <TextBox Grid.Column="1" Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}" CharacterCasing="Lower" AutomationProperties.AutomationId="LoginPracownika" />
+                    <TextBlock Grid.Row="1" Text="Imię" Style="{StaticResource Etykieta}" />
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Imie, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.AutomationId="ImiePracownika" />
+                    <TextBlock Grid.Row="2" Text="Nazwisko" Style="{StaticResource Etykieta}" />
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Nazwisko, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.AutomationId="NazwiskoPracownika" />
+                    <TextBlock Grid.Row="3" Text="Rola" Style="{StaticResource Etykieta}" />
+                    <ComboBox Grid.Row="3" Grid.Column="1" SelectedItem="{Binding Rola}"
+                              ItemsSource="{Binding DataContext.Role, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                    <CheckBox Grid.Row="4" Grid.Column="1" Content="Konto aktywne (pracownik może się logować)" IsChecked="{Binding Aktywny}" Margin="0,4,0,10" />
+                </Grid>
+                <ItemsControl ItemsSource="{Binding Formularz.WszystkieBledy}" ItemTemplate="{StaticResource ListaBledow}" Margin="0,0,0,6" />
+                <WrapPanel>
+                    <Button Content="Zapisz" Style="{StaticResource PrzyciskGlowny}" Command="{Binding ZapiszCommand}" AutomationProperties.AutomationId="ZapiszPracownika" />
+                    <Button Content="Anuluj" Command="{Binding AnulujCommand}" />
+                </WrapPanel>
+                <TextBlock Text="Hasło i blokada" Style="{StaticResource Podnaglowek}" />
+                <WrapPanel>
+                    <Button Content="Resetuj hasło" Command="{Binding ResetujHasloCommand}" />
+                    <Button Content="Odblokuj konto" Command="{Binding OdblokujCommand}" />
+                </WrapPanel>
+                <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TekstSzary}" Margin="0,8,0,0"
+                           Text="Nowe konto i reset hasła dostają hasło tymczasowe, które pracownik musi zmienić przy pierwszym logowaniu. Po 5 nieudanych próbach logowania konto jest blokowane. Kont się nie usuwa, tylko wyłącza, żeby został po nich ślad w dzienniku zmian." />
+            </StackPanel>
+        </GroupBox>
+    </Grid>
+</UserControl>
